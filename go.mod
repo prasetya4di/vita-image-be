@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	cloud.google.com/go/vision v1.2.0
+	github.com/disintegration/imaging v1.6.2
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/joho/godotenv v1.5.1
 	google.golang.org/api v0.70.0
@@ -13,7 +14,6 @@ require (
 require (
 	cloud.google.com/go v0.100.2 // indirect
 	cloud.google.com/go/compute v1.3.0 // indirect
-	github.com/disintegration/imaging v1.6.2 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.7 // indirect
