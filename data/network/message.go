@@ -6,5 +6,5 @@ import (
 )
 
 type MessageService interface {
-	SendImageMessage(message entity.Message) []image.Possibility
+	ScanImageMessage(message entity.Message) []image.Possibility
 }

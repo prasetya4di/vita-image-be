@@ -17,7 +17,7 @@ func NewMessageService() network.MessageService {
 	return &messageService{}
 }
 
-func (m *messageService) SendImageMessage(message entity.Message) []image.Possibility {
+func (m *messageService) ScanImageMessage(message entity.Message) []image.Possibility {
 	ctx := context.Background()
 	client, err := network.GetGoogleVision()
 	if err != nil {
