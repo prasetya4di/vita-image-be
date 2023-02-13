@@ -27,7 +27,7 @@ func (m *messageService) ScanImageMessage(message entity.Message) []image.Possib
 	defer client.Close()
 
 	// Sets the name of the image file to annotate.
-	filename := os.Getenv("BASEURL") + "public/images/" + message.Message
+	filename := "upload/images/" + message.Message
 
 	file, err := os.Open(filename)
 	if err != nil {
@@ -56,10 +56,10 @@ func (m *messageService) ScanImageMessage(message entity.Message) []image.Possib
 
 	var possibilities []image.Possibility
 
-	if landmarkNotation := res.LandmarkAnnotations[0]; landmarkNotation != nil {
+	if len(res.LandmarkAnnotations) > 0 {
 		possibilities = append(possibilities, image.Possibility{
 			Type:        pb.Feature_Type_name[int32(pb.Feature_LANDMARK_DETECTION)],
-			Description: landmarkNotation.Description,
+			Description: res.LandmarkAnnotations[0].Description,
 		})
 	}
 
@@ -70,10 +70,10 @@ func (m *messageService) ScanImageMessage(message entity.Message) []image.Possib
 		})
 	}
 
-	if logoNotation := res.LogoAnnotations[0]; logoNotation != nil {
+	if len(res.LogoAnnotations) > 0 {
 		possibilities = append(possibilities, image.Possibility{
 			Type:        pb.Feature_Type_name[int32(pb.Feature_LOGO_DETECTION)],
-			Description: logoNotation.Description,
+			Description: res.LogoAnnotations[0].Description,
 		})
 	}
 

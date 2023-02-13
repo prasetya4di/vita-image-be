@@ -64,7 +64,7 @@ func saveImage(file multipart.File, header *multipart.FileHeader) string {
 		log.Fatal(err)
 	}
 	src := imaging.Resize(imageFile, 1000, 0, imaging.Lanczos)
-	err = imaging.Save(src, fmt.Sprintf("public/images/%v", filename))
+	err = imaging.Save(src, fmt.Sprintf("upload/images/%v", filename))
 	if err != nil {
 		log.Fatalf("failed to save image: %v", err)
 	}
