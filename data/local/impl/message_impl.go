@@ -3,9 +3,15 @@ package impl
 import (
 	"database/sql"
 	"fmt"
-	"strings"
+	"github.com/disintegration/imaging"
+	"image"
+	"log"
+	"mime/multipart"
+	"path/filepath"
+	"time"
 	"vita-image-service/data/entity"
 	"vita-image-service/data/local"
+	constant "vita-image-service/util/const"
 )
 
 type messageDao struct {
@@ -18,7 +24,17 @@ func NewMessageDao(db *sql.DB) local.MessageDao {
 	}
 }
 
-func (md *messageDao) Insert(message entity.Message) (entity.Message, error) {
+func (md *messageDao) Insert(email string, file multipart.File, header *multipart.FileHeader) (entity.Message, error) {
+	filename := saveImage(file, header)
+
+	message := entity.Message{
+		Email:       email,
+		Message:     filename,
+		CreatedDate: time.Now(),
+		MessageType: constant.Send,
+		FileType:    constant.IMAGE,
+	}
+
 	result, err := md.db.Exec(
 		"Insert into message (email, message, created_date, message_type, file_type) VALUES (?, ?, ?, ?, ?)",
 		message.Email,
@@ -26,6 +42,7 @@ func (md *messageDao) Insert(message entity.Message) (entity.Message, error) {
 		message.CreatedDate,
 		message.MessageType,
 		message.FileType)
+
 	if err != nil {
 		return message, fmt.Errorf("add message: %v", err)
 	}
@@ -37,31 +54,20 @@ func (md *messageDao) Insert(message entity.Message) (entity.Message, error) {
 	return message, nil
 }
 
-func (md *messageDao) Inserts(messages []entity.Message) ([]entity.Message, error) {
-	var insertedMessages []entity.Message
-	tx, _ := md.db.Begin()
+func saveImage(file multipart.File, header *multipart.FileHeader) string {
+	fileExt := filepath.Ext(header.Filename)
+	now := time.Now()
+	filename := fmt.Sprintf("%v", now.Unix()) + fileExt
 
-	for _, msg := range messages {
-		msg.Message = strings.TrimSpace(msg.Message)
-		result, err := tx.Exec(
-			"INSERT INTO message (email, message, created_date, message_type, file_type) VALUES (?, ?, ?, ?, ?)",
-			msg.Email,
-			msg.Message,
-			msg.CreatedDate,
-			msg.MessageType,
-			msg.FileType)
-
-		if err != nil {
-			tx.Rollback()
-			return nil, err
-		}
-		msg.ID, _ = result.LastInsertId()
-		insertedMessages = append(insertedMessages, msg)
-	}
-
-	err := tx.Commit()
+	imageFile, _, err := image.Decode(file)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
-	return insertedMessages, nil
+	src := imaging.Resize(imageFile, 1000, 0, imaging.Lanczos)
+	err = imaging.Save(src, fmt.Sprintf("public/images/%v", filename))
+	if err != nil {
+		log.Fatalf("failed to save image: %v", err)
+	}
+
+	return filename
 }

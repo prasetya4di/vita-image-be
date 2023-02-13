@@ -1,8 +1,10 @@
 package local
 
-import "vita-image-service/data/entity"
+import (
+	"mime/multipart"
+	"vita-image-service/data/entity"
+)
 
 type MessageDao interface {
-	Insert(message entity.Message) (entity.Message, error)
-	Inserts(messages []entity.Message) ([]entity.Message, error)
+	Insert(email string, file multipart.File, header *multipart.FileHeader) (entity.Message, error)
 }
