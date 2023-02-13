@@ -77,5 +77,14 @@ func (m *messageService) ScanImageMessage(message entity.Message) []image.Possib
 		})
 	}
 
+	if len(possibilities) == 0 && len(res.LocalizedObjectAnnotations) > 0 {
+		for _, object := range res.LocalizedObjectAnnotations {
+			possibilities = append(possibilities, image.Possibility{
+				Type:        pb.Feature_Type_name[int32(pb.Feature_OBJECT_LOCALIZATION)],
+				Description: object.Name,
+			})
+		}
+	}
+
 	return possibilities
 }
