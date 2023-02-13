@@ -1,6 +1,6 @@
 package image
 
-type ImagePossibility struct {
+type Possibility struct {
 	Type        string `json:"type"`
 	Description string `json:"description"`
 }
