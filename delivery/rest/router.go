@@ -14,6 +14,7 @@ func LoadRoutes(handler handler.ImageHandler) {
 	router.GET("/ping", func(context *gin.Context) {
 		context.IndentedJSON(http.StatusOK, gin.H{"message": "Success"})
 	})
+	router.Static("/image", "upload/images")
 	err := router.Run(os.Getenv("BASEURL") + ":" + os.Getenv("PORT"))
 	if err != nil {
 		log.Fatal(err)
