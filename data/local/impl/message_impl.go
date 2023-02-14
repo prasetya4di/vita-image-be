@@ -59,6 +59,7 @@ func saveImage(file multipart.File, header *multipart.FileHeader) string {
 	now := time.Now()
 	filename := fmt.Sprintf("%v", now.Unix()) + fileExt
 
+	file.Seek(0, 0)
 	imageFile, _, err := image.Decode(file)
 	if err != nil {
 		log.Fatal(err)
